@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  llm-deployment:
+    build: .
+    container_name: llm-deployment-app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - PORT=5000
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - YOUR_SECRET=${YOUR_SECRET}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+    volumes:
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
